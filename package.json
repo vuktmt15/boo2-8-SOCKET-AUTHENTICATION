@@ -1,0 +1,24 @@
+{
+  "name": "boo2-8-SOCKET-AUTHENTICATION",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/vuktmt15/boo2-8-SOCKET-AUTHENTICATION.git",
+  "author": "Nguyễn Văn Vũ <85126015+vuktmt15@users.noreply.github.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.8",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.7.2",
+    "rand-token": "^1.0.1",
+    "util": "^0.12.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
