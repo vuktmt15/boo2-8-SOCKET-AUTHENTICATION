@@ -1,20 +1,36 @@
 const UserController = require("../users/users.controller");
+const AuthMethod = require("./auth.methods");
 const bcrypt = require("bcrypt");
 const randToken = require("rand-token");
+const { errorAuth } = require("./message/auth.error");
+const { notificationAuth } = require("./message/auth.notification");
 
 class AuthController {
   async renderRegister(req, res) {
-    res.render("register");
+    return res.render("register", {
+      messageError: errorAuth,
+      messageNotification: notificationAuth,
+      error: req.query.error ?? false,
+      notification: req.query.notification ?? false,
+    });
   }
 
   async renderLogin(req, res) {
-    res.render("login");
+    if (req.cookies.accessToken) {
+      return res.redirect("/");
+    }
+    return res.render("login", {
+      messageError: errorAuth,
+      messageNotification: notificationAuth,
+      error: req.query.error ?? false,
+      notification: req.query.notification ?? false,
+    });
   }
 
   async register(req, res) {
     const checkExists = await UserController.getUser(req.body.email);
     if (checkExists) {
-      return res.redirect("back", { error: "Email already exists!" });
+      return res.redirect("/register?error=4");
     } else {
       const hashPassword = bcrypt.hashSync(
         req.body.password,
@@ -27,16 +43,16 @@ class AuthController {
       };
       const createUser = await UserController.createUser(newUser);
       if (!createUser) {
-        return res.redirect("back", { error: "Registration Failed!" });
+        return res.redirect("register?error=5");
       }
-      return res.redirect("/login", { registered: true });
+      return res.redirect("/login?notification=0");
     }
   }
 
   async login(req, res) {
-    const user = await UserController.getUser(req.email);
+    const user = await UserController.getUser(req.body.email);
     if (!user) {
-      return res.redirect("back", { error: "Account does not exist!" });
+      return res.redirect("/login?error=1");
     }
 
     const isPasswordValid = bcrypt.compareSync(
@@ -44,7 +60,8 @@ class AuthController {
       user.password
     );
     if (!isPasswordValid) {
-      return res.redirect("back", { error: "Password is not valid!" });
+      console.log("Password is not valid");
+      return res.redirect("/login?error=2");
     }
 
     const accessToken = await AuthMethod.generateToken(
@@ -53,7 +70,8 @@ class AuthController {
       process.env.ACCESS_TOKEN_LIFE
     );
     if (!accessToken) {
-      return res.redirect("back", { error: "Login Failed!" });
+      console.log("Access token is not valid");
+      return res.redirect("/login?error=3");
     }
 
     let refreshToken = randToken.generate(
@@ -64,8 +82,12 @@ class AuthController {
     } else {
       refreshToken = user.refreshToken;
     }
-
-    res.redirect("/", { user: user, accessToken, refreshToken });
+    res.cookie("accessToken", accessToken, {
+      maxAge: 1000 * 60 * 15, // 15 minutes
+      path: "/",
+      secure: false,
+    });
+    res.redirect("/");
   }
 
   async refreshToken(req, res) {

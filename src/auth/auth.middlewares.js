@@ -1,12 +1,12 @@
-const userModle = require("../users/users.models");
+const UserController = require("../users/users.controller");
 
 const authMethod = require("./auth.methods");
 
 class AuthMiddleware {
   async isAuth(req, res, next) {
-    const accessTokenFromHeader = req.headers.x_authorization;
+    const accessTokenFromHeader = req.cookies.accessToken;
     if (!accessTokenFromHeader) {
-      return res.status(401).send("Không tìm thấy access token!");
+      return res.redirect("/login?error=0");
     }
 
     const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
@@ -16,12 +16,10 @@ class AuthMiddleware {
       accessTokenSecret
     );
     if (!verified) {
-      return res
-        .status(401)
-        .send("Bạn không có quyền truy cập vào tính năng này!");
+      return res.redirect("/login?error=0");
     }
 
-    const user = await userModle.getUser(verified.payload.username);
+    const user = await UserController.getUser(verified.payload.email);
     req.user = user;
 
     return next();

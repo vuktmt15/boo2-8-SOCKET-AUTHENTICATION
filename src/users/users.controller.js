@@ -10,6 +10,10 @@ class UserController {
     return await newUser.save();
   }
 
+  async getAllUsersWithoutMe(myId) {
+    return await User.find({ _id: { $ne: myId } });
+  }
+
   async updateRefreshToken(email, refreshToken) {
     return await User.findOneAndUpdate(
       { email: email },
