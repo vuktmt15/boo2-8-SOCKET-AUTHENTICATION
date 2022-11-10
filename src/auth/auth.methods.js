@@ -33,6 +33,15 @@ class AuthMethod {
       return null;
     }
   }
+
+  async verifyToken(token, secretKey) {
+    try {
+      return await verify(token, secretKey);
+    } catch (error) {
+      console.log(`Error in verify access token:  + ${error}`);
+      return null;
+    }
+  }
 }
 
 module.exports = new AuthMethod();
