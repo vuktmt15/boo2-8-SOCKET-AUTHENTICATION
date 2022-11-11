@@ -5,6 +5,15 @@ class UserController {
     return await User.findOne({ email: email });
   }
 
+  async getUserById(id) {
+    try {
+      const user = await User.findById(id);
+      return user;
+    } catch (e) {
+      return false;
+    }
+  }
+
   async createUser(data) {
     const newUser = new User(data);
     return await newUser.save();

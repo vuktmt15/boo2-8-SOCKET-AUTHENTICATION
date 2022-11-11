@@ -6,6 +6,7 @@ authRoute.get("/login", AuthController.renderLogin);
 authRoute.get("/register", AuthController.renderRegister);
 authRoute.post("/login", AuthController.login);
 authRoute.post("/register", AuthController.register);
+authRoute.get("/logout", AuthController.logout);
 authRoute.post("/refresh-token", AuthController.refreshToken);
 
 module.exports = authRoute;

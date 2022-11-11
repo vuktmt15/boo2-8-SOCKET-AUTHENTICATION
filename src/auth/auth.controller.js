@@ -7,6 +7,9 @@ const { notificationAuth } = require("./message/auth.notification");
 
 class AuthController {
   async renderRegister(req, res) {
+    if (req.cookies.accessToken) {
+      res.clearCookie("accessToken");
+    }
     return res.render("register", {
       messageError: errorAuth,
       messageNotification: notificationAuth,
@@ -39,6 +42,9 @@ class AuthController {
       const newUser = {
         name: req.body.name,
         email: req.body.email,
+        avatar:
+          req.body.avatar ??
+          "https://cdn-icons-png.flaticon.com/512/1053/1053244.png?w=360",
         password: hashPassword,
       };
       const createUser = await UserController.createUser(newUser);
@@ -88,6 +94,13 @@ class AuthController {
       secure: false,
     });
     res.redirect("/");
+  }
+
+  async logout(req, res) {
+    if (req.cookies.accessToken) {
+      res.clearCookie("accessToken");
+    }
+    res.redirect("/login");
   }
 
   async refreshToken(req, res) {
