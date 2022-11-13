@@ -5,6 +5,12 @@ const dataUser = document.querySelector(".data-user");
 const dataFriend = document.querySelector(".data-friend");
 const listMessages = document.querySelector("ul.list-messages");
 
+// listMessages.scrollIntoView({
+//   behavior: "smooth",
+//   block: "end",
+//   inline: "end",
+// });
+
 form.addEventListener("submit", function (e) {
   e.preventDefault();
   const avatarSender = dataUser.getAttribute("data-avatar");
