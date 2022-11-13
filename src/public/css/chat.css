@@ -12,6 +12,7 @@ body {
 }
 .main-section {
   width: 960px;
+  max-width: calc(100% - 12px);
   background-color: #fff;
   margin: auto;
 }
